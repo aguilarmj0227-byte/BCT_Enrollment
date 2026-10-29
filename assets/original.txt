@@ -1,0 +1,293 @@
+import flet as ft
+
+class BCTEnrollmentApp:
+    def __init__(self, page: ft.Page):
+        self.page = page
+        self.setup_window()
+        self.build_ui()
+
+    def setup_window(self):
+        self.page.title = "BCT Enrollment Form & Assessment Calculator"
+        self.page.window.width = 520
+        self.page.window.height = 850
+        self.page.window.center()  
+        self.page.padding = 0  
+        self.page.spacing = 0
+        self.page.vertical_alignment = ft.MainAxisAlignment.CENTER
+        self.page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+        
+    def build_ui(self):
+        header = ft.Container(
+            content=ft.Row(
+                controls=[
+                    ft.Image(
+                        src="assets/bct_logo.jpg",
+                        width=65,
+                        height=65,
+                        fit=ft.BoxFit.CONTAIN,
+                    ),
+                    ft.Column(
+                        controls=[
+                            ft.Text(
+                                "BAGUIO COLLEGE OF\nTECHNOLOGY",
+                                size=18,
+                                weight=ft.FontWeight.BOLD,
+                                color="#8F2638",  
+                                style=ft.TextStyle(letter_spacing=0.5), 
+                            ),
+                            ft.Text(
+                                "ENROLLMENT & ASSESSMENT PORTAL",
+                                size=10,
+                                weight=ft.FontWeight.W_600,
+                                color="#475569",  
+                                style=ft.TextStyle(letter_spacing=1), 
+                            ),
+                        ],
+                        spacing=2,
+                        expand=True,
+                ),
+                ft.IconButton(
+                    icon=ft.Icons.MENU_OUTLINED,
+                    icon_size=22,
+                    icon_color="#475569",  
+                    tooltip="Settings"
+                ),
+            ],
+            spacing=12,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
+        padding=ft.Padding(20, 24, 20, 20),
+    )
+
+        divider = ft.Container(
+            content=ft.Divider(height=1, color="#CBD5E1"), 
+            padding=ft.Padding(20, 0, 20, 10)
+        )
+    
+        soft_dark_color = "#334155" 
+        dark_label_style = ft.TextStyle(color=soft_dark_color, weight=ft.FontWeight.W_600)
+        
+        input_text_style = ft.TextStyle(color="#1A202C")
+        self.status = ft.Text(size=13)
+        self.result_area = ft.Column(spacing=12, visible=False)
+        
+        
+        # FIXED: Added text_style=input_text_style to all inputs
+        self.student_id = ft.TextField(label="Student ID Number", label_style=dark_label_style, text_style=input_text_style, border_radius=8, border_color="#94A3B8", text_size=15, content_padding=12, bgcolor="#FFFFFF")
+        self.course = ft.TextField(label="Course / Program", label_style=dark_label_style, text_style=input_text_style, border_radius=8, border_color="#94A3B8", text_size=15, content_padding=12, bgcolor="#FFFFFF")
+        self.last_name = ft.TextField(label="Last Name", label_style=dark_label_style, text_style=input_text_style, border_radius=8, border_color="#94A3B8", expand=4, text_size=15, content_padding=12, bgcolor="#FFFFFF")
+        self.first_name = ft.TextField(label="First Name", label_style=dark_label_style, text_style=input_text_style, border_radius=8, border_color="#94A3B8", expand=4, text_size=15, content_padding=12, bgcolor="#FFFFFF")
+        self.mi = ft.TextField(label="M.I.", label_style=dark_label_style, text_style=input_text_style, border_radius=8, border_color="#94A3B8", expand=2, text_size=15, content_padding=12, bgcolor="#FFFFFF")
+        self.total_units = ft.TextField(label="Total Units (1-25)", label_style=dark_label_style, text_style=input_text_style, border_radius=8, border_color="#94A3B8", expand=1, text_size=15, content_padding=12, keyboard_type=ft.KeyboardType.NUMBER, bgcolor="#FFFFFF")
+        self.no_subjects = ft.TextField(label="No. of Subjects", label_style=dark_label_style, text_style=input_text_style, border_radius=8, border_color="#94A3B8", expand=1, text_size=15, content_padding=12, keyboard_type=ft.KeyboardType.NUMBER, bgcolor="#FFFFFF")
+        self.lab_classes = ft.TextField(label="No. of Laboratory", label_style=dark_label_style, text_style=input_text_style, border_radius=8, border_color="#94A3B8", expand=1, text_size=15, content_padding=12, keyboard_type=ft.KeyboardType.NUMBER, bgcolor="#FFFFFF")
+        self.hands_on = ft.TextField(label="No. of Hands-on", label_style=dark_label_style, text_style=input_text_style, border_radius=8, border_color="#94A3B8", expand=1, text_size=15, content_padding=12, keyboard_type=ft.KeyboardType.NUMBER, bgcolor="#FFFFFF")
+
+        form_fields = ft.Column(
+            controls=[
+                ft.Text("STUDENT IDENTITY & ACADEMIC PROFILE", size=11, weight=ft.FontWeight.BOLD, color=soft_dark_color, style=ft.TextStyle(letter_spacing=1)),
+                self.student_id,
+                self.course,
+            
+                ft.Container(height=8), 
+            
+                ft.Text("PERSONAL INFORMATION", size=11, weight=ft.FontWeight.BOLD, color=soft_dark_color, style=ft.TextStyle(letter_spacing=1)),
+                ft.Row([self.last_name, self.first_name, self.mi], spacing=10),
+            
+                ft.Container(height=8), 
+            
+                ft.Text("ACADEMIC LOAD & LABORATORY UNITS", size=11, weight=ft.FontWeight.BOLD, color=soft_dark_color, style=ft.TextStyle(letter_spacing=1)),
+                ft.Row([self.total_units, self.no_subjects], spacing=10),
+                ft.Row([self.lab_classes, self.hands_on], spacing=10),
+            
+                ft.Container(height=15),
+            
+                ft.Button(
+                    "Calculate Assessment & Submit",
+                    bgcolor="#8F2638",
+                    color="white",
+                    height=48,
+                    style=ft.ButtonStyle(
+                        shape=ft.RoundedRectangleBorder(radius=8),
+                    ),
+                    width=float("inf"),
+                    on_click=self.calculate_assessment
+                ),
+
+                ft.Button(
+                    "Clear Fields",
+                    bgcolor="#8F2638",
+                    color="white",
+                    height=48,
+                    style=ft.ButtonStyle(
+                        shape=ft.RoundedRectangleBorder(radius=8),
+                    ),
+                    width=float("inf"),
+                    on_click=self.clear_fields
+                )
+            ],
+            spacing=12,
+        )
+
+        portal_card = ft.Container(
+            content=ft.Column(
+                controls=[
+                    header,
+                    divider,
+                    ft.Container(content=form_fields, padding=ft.Padding(24, 0, 24, 28))
+                ],
+                scroll=ft.ScrollMode.ADAPTIVE,
+                tight=True  
+            ),
+            bgcolor="#F1F5F9",
+            border_radius=ft.BorderRadius(16, 16, 16, 16), 
+            width=460,
+            height=740,  
+            shadow=ft.BoxShadow(
+                blur_radius=20,
+                color="#1A000000", 
+                offset=ft.Offset(0, 4)
+            )
+        )
+
+        background_layout = ft.Container(
+            image=ft.DecorationImage(
+                src="assets/background.png",  
+                fit=ft.BoxFit.COVER,          
+            ),
+            expand=True,
+            width=float("inf"),
+            height=float("inf"),
+            content=portal_card,
+            alignment=ft.Alignment(0, 0),     
+        )
+
+        self.page.add(background_layout)
+
+    def calculate_assessment(self, e):
+        """Action logic triggered when the user clicks 'Calculate Assessment & Submit'."""
+        
+def calculate_assessment(self, e):
+    self.status.value = ""
+    self.result_area.visible = False
+
+    try:
+        student_id = (self.student_id.value or "").strip()
+        course = (self.course.value or "").strip()
+        last_name = (self.last_name.value or "").strip()
+        first_name = (self.first_name.value or "").strip()
+        mid_initial = (self.mi.value or "").strip()
+
+        units = int((self.total_units.value or "").strip())
+        subjects = int((self.no_subjects.value or "").strip())
+        laboratory = int((self.lab_classes.value or "").strip())
+        hands_on = int((self.hands_on.value or "").strip())
+
+    except (ValueError, AttributeError):
+        self.status.value = "Please enter valid information in all fields."
+        self.page.update()
+        return
+
+    # Validate the input
+    if not student_id or not course or not last_name or not first_name:
+        self.status.value = "Please complete all required student information."
+    elif not 1 <= units <= 25:
+        self.status.value = "Units must be between 1 and 25."
+    elif units < 10:
+        self.status.value = "You must enroll in at least 10 units."
+    elif subjects < 1:
+        self.status.value = "Number of subjects must be at least 1."
+    elif not 1 <= laboratory <= 5:
+        self.status.value = "Laboratory must be 1 to 5."
+    elif not 1 <= hands_on <= 5:
+        self.status.value = "Hands-on must be 1 to 5."
+    elif laboratory > units or hands_on > units:
+        self.status.value = "Laboratory or hands-on subjects cannot exceed total units."
+    else:
+        # Create the results content only after validation succeeds
+        full_name = f"{first_name} {mid_initial} {last_name}".strip()
+
+        result_content = ft.Column(
+            controls=[
+                ft.Text(
+                    "ASSESSMENT RESULTS",
+                    size=20,
+                    weight=ft.FontWeight.BOLD,
+                    color="#8F2638",
+                ),
+                ft.Divider(color="#CBD5E1"),
+                ft.Text(f"Student ID: {student_id}", size=15, color="#334155"),
+                ft.Text(f"Student Name: {full_name}", size=15, color="#334155"),
+                ft.Text(f"Course / Program: {course}", size=15, color="#334155"),
+                ft.Text(f"Total Units: {units}", size=15, color="#334155"),
+                ft.Text(f"Number of Subjects: {subjects}", size=15, color="#334155"),
+                ft.Text(f"Laboratory Classes: {laboratory}", size=15, color="#334155"),
+                ft.Text(f"Hands-on Classes: {hands_on}", size=15, color="#334155"),
+                ft.Container(height=15),
+                ft.Button(
+                    "Back to Enrollment",
+                    bgcolor="#8F2638",
+                    color="white",
+                    width=float("inf"),
+                    height=45,
+                    on_click=self.show_enrollment_page,
+                ),
+            ],
+            spacing=12,
+            scroll=ft.ScrollMode.ADAPTIVE,
+        )
+
+        result_card = ft.Container(
+            content=result_content,
+            bgcolor="#F1F5F9",
+            border_radius=16,
+            padding=24,
+            width=460,
+            height=600,
+            shadow=ft.BoxShadow(
+                blur_radius=20,
+                color="#1A000000",
+                offset=ft.Offset(0, 4),
+            ),
+        )
+
+        background_layout = ft.Container(
+            image=ft.DecorationImage(
+                src="assets/background.png",
+                fit=ft.BoxFit.COVER,
+            ),
+            expand=True,
+            width=float("inf"),
+            height=float("inf"),
+            content=result_card,
+            alignment=ft.Alignment(0, 0),
+        )
+
+        # Show the results layout
+        self.page.controls.clear()
+        self.page.add(background_layout)
+        self.page.update()
+        return
+
+    # Update validation error messages on the current page
+    self.page.update()
+
+    
+def clear_fields(self, e):
+    self.student_id.value = ""
+    self.course.value = ""
+    self.last_name.value = ""
+    self.first_name.value = ""
+    self.mi.value = ""
+    self.total_units.value = ""
+    self.no_subjects.value = ""
+    self.lab_classes.value = ""
+    self.hands_on.value = ""
+
+    self.status.value = ""
+    self.result_area.visible = False
+
+    self.page.update()
+
+if __name__ == "__main__":
+    ft.run(lambda page: BCTEnrollmentApp(page))
