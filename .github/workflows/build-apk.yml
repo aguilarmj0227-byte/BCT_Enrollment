@@ -1,0 +1,49 @@
+
+name: Build TuiCalc APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Verify Flet version
+        run: uv run python -c "import flet; print(flet.__version__)"
+
+      - name: Build Android APK
+        run: uv run flet build apk --verbose
+
+      - name: Rename APK
+        run: |
+          APK=$(find build -type f -name "*.apk" -print -quit)
+          if [ -z "$APK" ]; then
+            echo "APK file not found!"
+            exit 1
+          fi
+          cp "$APK" TuiCalc.apk
+
+      - name: Upload TuiCalc APK
+        uses: actions/upload-artifact@v6
+        with:
+          name: TuiCalc-APK
+          path: TuiCalc.apk
+          if-no-files-found: error
