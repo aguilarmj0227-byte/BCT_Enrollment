@@ -1,1 +1,19 @@
 
+
+[project]
+name = "bct-enrollment"
+version = "1.0.0"
+description = "TuiCalc - BCT Tuition Assessment Calculator"
+requires-python = ">=3.10"
+dependencies = [
+    "flet==1.0.5"
+]
+
+[dependency-groups]
+dev = [
+    "flet-cli==1.0.5"
+]
+
+[tool.flet]
+org = "com.bct"
+product = "TuiCalc"
