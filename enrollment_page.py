@@ -79,7 +79,7 @@ def build_enrollment_page(app):
         content=ft.Row(
             controls=[
                 ft.Image(
-                    src="assets/bct_logo.png",
+                    src="bct_logo.png",
                     width=65,
                     height=65,
                     fit=ft.BoxFit.CONTAIN,
@@ -311,7 +311,7 @@ def build_enrollment_page(app):
     # BACKGROUND
     background_layout = ft.Container(
         image=ft.DecorationImage(
-            src="assets/background.png",
+            src="background.png",
             fit=ft.BoxFit.COVER,
         ),
         expand=True,
@@ -571,7 +571,7 @@ def show_how_to_use(app, e=None):
     # BACKGROUND
     background_layout = ft.Container(
         image=ft.DecorationImage(
-            src="assets/background.png",
+            src="background.png",
             fit=ft.BoxFit.COVER,
         ),
         expand=True,
