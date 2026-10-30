@@ -1,3 +1,4 @@
+
 import flet as ft
 
 from validation import handle_field_focus, handle_field_change
@@ -14,6 +15,10 @@ from config import (
 )
 
 
+# ==========================================
+# ENROLLMENT PAGE
+# ==========================================
+
 def build_enrollment_page(app):
     soft_dark_color = DARK_LABEL
 
@@ -21,6 +26,7 @@ def build_enrollment_page(app):
         color=soft_dark_color,
         weight=ft.FontWeight.W_600,
     )
+
     input_text_style = ft.TextStyle(color=INPUT_TEXT)
 
     app.status = ft.Text(size=13, color="#DC2626")
@@ -52,16 +58,28 @@ def build_enrollment_page(app):
     app.last_name = create_field("Last Name", expand=4)
     app.first_name = create_field("First Name", expand=4)
     app.mi = create_field("M.I.", expand=2)
-    app.total_units = create_field("Total Units (1-25)", expand=1, numeric=True)
-    app.lab_classes = create_field("No. of Laboratory", expand=1, numeric=True)
-    app.hands_on = create_field("No. of Hands-on", expand=1, numeric=True)
-    app.downpayment = create_field("Downpayment", expand=1, numeric=True)
+    app.total_units = create_field(
+        "Total Units (1-25)", expand=1, numeric=True
+    )
+    app.lab_classes = create_field(
+        "No. of Laboratory", expand=1, numeric=True
+    )
+    app.hands_on = create_field(
+        "No. of Hands-on", expand=1, numeric=True
+    )
+    app.downpayment = create_field(
+        "Downpayment", expand=1, numeric=True
+    )
 
+    # HOW TO USE FUNCTION CONNECTION
+    app.show_how_to_use = lambda e: show_how_to_use(app, e)
+
+    # HEADER
     header = ft.Container(
         content=ft.Row(
             controls=[
                 ft.Image(
-                    src="bct_logo.png",
+                    src="assets/bct_logo.png",
                     width=65,
                     height=65,
                     fit=ft.BoxFit.CONTAIN,
@@ -96,7 +114,7 @@ def build_enrollment_page(app):
                         ft.PopupMenuItem(
                             content=ft.Text("How to use", size=12),
                             icon=ft.Icons.HELP_OUTLINE,
-                            on_click=lambda e: show_how_to_use(app, e),
+                            on_click=app.show_how_to_use,
                         ),
                         ft.PopupMenuItem(
                             content=ft.Text("Records", size=12),
@@ -124,6 +142,7 @@ def build_enrollment_page(app):
         padding=ft.Padding(20, 0, 20, 10),
     )
 
+    # FIELD MAP
     app.field_map = {
         "student_id": app.student_id,
         "course": app.course,
@@ -140,6 +159,7 @@ def build_enrollment_page(app):
     app.field_controls = {}
 
     for field_name, field in app.field_map.items():
+
         error_label = ft.Text(
             "",
             color="#DC2626",
@@ -159,10 +179,12 @@ def build_enrollment_page(app):
         field.on_focus = (
             lambda e, name=field_name: handle_field_focus(app, name)
         )
+
         field.on_change = (
             lambda e, name=field_name: handle_field_change(app, name)
         )
 
+    # ENROLLMENT FORM
     form_fields = ft.Column(
         controls=[
             ft.Text(
@@ -172,9 +194,12 @@ def build_enrollment_page(app):
                 color=soft_dark_color,
                 style=ft.TextStyle(letter_spacing=1),
             ),
+
             app.field_controls["student_id"],
             app.field_controls["course"],
+
             ft.Container(height=8),
+
             ft.Text(
                 "PERSONAL INFORMATION",
                 size=11,
@@ -182,6 +207,7 @@ def build_enrollment_page(app):
                 color=soft_dark_color,
                 style=ft.TextStyle(letter_spacing=1),
             ),
+
             ft.Row(
                 controls=[
                     app.field_controls["last_name"],
@@ -191,7 +217,9 @@ def build_enrollment_page(app):
                 spacing=10,
                 vertical_alignment=ft.CrossAxisAlignment.START,
             ),
+
             ft.Container(height=8),
+
             ft.Text(
                 "ACADEMIC LOAD & LABORATORY UNITS",
                 size=11,
@@ -199,6 +227,7 @@ def build_enrollment_page(app):
                 color=soft_dark_color,
                 style=ft.TextStyle(letter_spacing=1),
             ),
+
             ft.Column(
                 controls=[
                     ft.Row(
@@ -209,6 +238,7 @@ def build_enrollment_page(app):
                         spacing=10,
                         vertical_alignment=ft.CrossAxisAlignment.START,
                     ),
+
                     ft.Row(
                         controls=[
                             app.field_controls["lab_classes"],
@@ -220,8 +250,11 @@ def build_enrollment_page(app):
                 ],
                 spacing=10,
             ),
+
             ft.Container(height=15),
+
             app.status,
+
             ft.Button(
                 "Calculate Assessment & Submit",
                 bgcolor=BURGUNDY,
@@ -233,6 +266,7 @@ def build_enrollment_page(app):
                 width=float("inf"),
                 on_click=app.calculate_assessment,
             ),
+
             ft.Button(
                 "Clear Fields",
                 bgcolor=BURGUNDY,
@@ -248,11 +282,13 @@ def build_enrollment_page(app):
         spacing=12,
     )
 
+    # ENROLLMENT CARD
     portal_card = ft.Container(
         content=ft.Column(
             controls=[
                 header,
                 divider,
+
                 ft.Container(
                     content=form_fields,
                     padding=ft.Padding(24, 0, 24, 28),
@@ -272,9 +308,10 @@ def build_enrollment_page(app):
         ),
     )
 
+    # BACKGROUND
     background_layout = ft.Container(
         image=ft.DecorationImage(
-            src="background.png",
+            src="assets/background.png",
             fit=ft.BoxFit.COVER,
         ),
         expand=True,
@@ -288,6 +325,10 @@ def build_enrollment_page(app):
     app.page.add(background_layout)
     app.page.update()
 
+
+# ==========================================
+# CLEAR FIELDS FUNCTION
+# ==========================================
 
 def clear_fields(app, e=None):
     app.student_id.value = ""
@@ -306,15 +347,239 @@ def clear_fields(app, e=None):
     for field_name, field in app.field_map.items():
         field.error_text = None
         field.border_color = BORDER_COLOR
+
         app.error_labels[field_name].value = ""
         app.error_labels[field_name].visible = False
 
     app.page.update()
 
 
+# ==========================================
+# HOW TO USE PAGE
+# ==========================================
+
 def show_how_to_use(app, e=None):
-    app.page.open(
-        ft.SnackBar(
-            content=ft.Text("Instructions for using the app")
-        )
+
+    app.page.controls.clear()
+
+    # HEADER
+    how_to_header = ft.Row(
+        controls=[
+            ft.IconButton(
+                icon=ft.Icons.ARROW_BACK,
+                icon_color=BURGUNDY,
+                on_click=lambda e: build_enrollment_page(app),
+                tooltip="Back to Enrollment",
+            ),
+
+            ft.Row(
+                controls=[
+                    ft.Icon(
+                        icon=ft.Icons.HELP_OUTLINE,
+                        color=BURGUNDY,
+                        size=22,
+                    ),
+
+                    ft.Text(
+                        "HOW TO USE",
+                        size=20,
+                        weight=ft.FontWeight.BOLD,
+                        color=BURGUNDY,
+                    ),
+                ],
+                spacing=5,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+        ],
+        spacing=5,
+        vertical_alignment=ft.CrossAxisAlignment.CENTER,
     )
+
+    # INSTRUCTIONS
+    instructions = ft.Column(
+        controls=[
+            # STEP 1
+            ft.Text(
+                "1. Student Information",
+                size=14,
+                weight=ft.FontWeight.BOLD,
+                color=BURGUNDY,
+            ),
+
+            ft.Text(
+                "Enter your Student ID Number and Course / Program.",
+                color="#222222",
+            ),
+
+            ft.Divider(color=DIVIDER_COLOR),
+
+            # STEP 2
+            ft.Text(
+                "2. Personal Information",
+                size=14,
+                weight=ft.FontWeight.BOLD,
+                color=BURGUNDY,
+            ),
+
+            ft.Text(
+                "Provide your Last Name, First Name, and Middle Initial (M.I.).",
+                color="#222222",
+            ),
+
+            ft.Divider(color=DIVIDER_COLOR),
+
+            # STEP 3
+            ft.Text(
+                "3. Academic Load",
+                size=14,
+                weight=ft.FontWeight.BOLD,
+                color=BURGUNDY,
+            ),
+
+            ft.Text(
+                "Enter your Total Units, Number of Laboratory classes, "
+                "and Number of Hands-on classes.",
+                color="#222222",
+            ),
+
+            ft.Divider(color=DIVIDER_COLOR),
+
+            # STEP 4
+            ft.Text(
+                "4. Downpayment",
+                size=14,
+                weight=ft.FontWeight.BOLD,
+                color=BURGUNDY,
+            ),
+
+            ft.Text(
+                "Enter the amount of your initial payment.",
+                color="#222222",
+            ),
+
+            ft.Divider(color=DIVIDER_COLOR),
+
+            # STEP 5
+            ft.Text(
+                "5. Calculate Assessment",
+                size=14,
+                weight=ft.FontWeight.BOLD,
+                color=BURGUNDY,
+            ),
+
+            ft.Text(
+                "Click Calculate Assessment & Submit to calculate "
+                "your enrollment fees.",
+                color="#222222",
+            ),
+
+            ft.Divider(color=DIVIDER_COLOR),
+
+            # STEP 6
+            ft.Text(
+                "6. Review Assessment",
+                size=14,
+                weight=ft.FontWeight.BOLD,
+                color=BURGUNDY,
+            ),
+
+            ft.Text(
+                "Review your calculated fees and assessment details.",
+                color="#222222",
+            ),
+
+            ft.Divider(color=DIVIDER_COLOR),
+
+            # STEP 7
+            ft.Text(
+                "7. Clear Fields",
+                size=14,
+                weight=ft.FontWeight.BOLD,
+                color=BURGUNDY,
+            ),
+
+            ft.Text(
+                "Click Clear Fields if you want to reset the enrollment form.",
+                color="#222222",
+            ),
+        ],
+        spacing=10,
+        scroll=ft.ScrollMode.AUTO,
+        expand=True,
+    )
+
+    # BACK BUTTON
+    back_button = ft.Button(
+        "Back to Enrollment",
+        icon=ft.Icons.ARROW_BACK,
+        bgcolor=BURGUNDY,
+        color=WHITE,
+        width=float("inf"),
+        height=48,
+        on_click=lambda e: build_enrollment_page(app),
+    )
+
+    # HOW TO USE CARD
+    how_to_use_page = ft.Container(
+        content=ft.Column(
+            controls=[
+                # HEADER
+                how_to_header,
+
+                ft.Divider(color=DIVIDER_COLOR),
+
+                # TITLE
+                ft.Text(
+                    "Enrollment & Assessment Guide",
+                    size=18,
+                    weight=ft.FontWeight.BOLD,
+                    color=BURGUNDY,
+                ),
+
+                ft.Text(
+                    "Follow these steps to use the enrollment calculator.",
+                    size=13,
+                    color=MUTED_TEXT,
+                ),
+
+                ft.Container(height=10),
+
+                # INSTRUCTIONS
+                instructions,
+
+                # BACK BUTTON
+                ft.Container(
+                    content=back_button,
+                    padding=ft.Padding(0, 10, 0, 0),
+                ),
+            ],
+            spacing=12,
+            expand=True,
+        ),
+        bgcolor=CARD_BACKGROUND,
+        border_radius=16,
+        padding=24,
+        width=460,
+        height=740,
+        shadow=ft.BoxShadow(
+            blur_radius=20,
+            color="#1A000000",
+            offset=ft.Offset(0, 4),
+        ),
+    )
+
+    # BACKGROUND
+    background_layout = ft.Container(
+        image=ft.DecorationImage(
+            src="assets/background.png",
+            fit=ft.BoxFit.COVER,
+        ),
+        expand=True,
+        width=float("inf"),
+        height=float("inf"),
+        content=how_to_use_page,
+        alignment=ft.Alignment(0, 0),
+    )
+
+    app.page.add(background_layout)
+    app.page.update()
