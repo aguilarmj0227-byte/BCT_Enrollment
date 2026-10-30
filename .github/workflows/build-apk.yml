@@ -38,6 +38,13 @@ jobs:
       - name: Verify Flet version
         run: uv run python -c "import flet; print(flet.__version__)"
 
+      - name: Verify app icon
+        run: |
+          if [ ! -f assets/icon.png ]; then
+            echo "App icon not found: assets/icon.png"
+            exit 1
+          fi
+
       - name: Build Android APK
         run: uv run flet build apk --verbose
 
@@ -51,6 +58,7 @@ jobs:
           fi
 
           cp "$APK" TuiCalc.apk
+          echo "APK successfully prepared!"
 
       - name: Upload APK
         uses: actions/upload-artifact@v6
