@@ -412,7 +412,7 @@ def show_results(app, data):
         ),
         expand=True,
         image=ft.DecorationImage(
-            src="assets/background.png",
+            src="background.png",
             fit=ft.BoxFit.COVER,
         ),
         alignment=ft.Alignment(0, 0),
