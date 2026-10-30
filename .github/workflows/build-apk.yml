@@ -45,8 +45,8 @@ jobs:
             exit 1
           fi
 
-      - name: Build Android APK
-        run: uv run flet build apk --verbose
+      - name: Build APK
+        run: uv run flet build apk --verbose --arch arm64-v8a x86_64
 
       - name: Find and rename APK
         run: |
