@@ -1,3 +1,4 @@
+
 import flet as ft
 from config import BURGUNDY, CARD_BACKGROUND, DIVIDER_COLOR
 
@@ -51,6 +52,17 @@ def quantity_row(label, value):
 
 def show_results(app, data):
     page = app.page
+
+    # Responsive card dimensions
+    screen_width = page.width or 360
+
+    card_width = min(
+        460,
+        max(280, screen_width - 24)
+    )
+
+    card_padding = 16 if screen_width < 400 else 24
+    button_width = card_width - (card_padding * 2)
 
     # Save all enrollment inputs before showing the assessment.
     app.saved_inputs = {
@@ -342,7 +354,7 @@ def show_results(app, data):
         page.controls.clear()
         app.build_ui()
 
-        # Restore the saved values to the newly created textfields.
+        # Restore saved values
         app.student_id.value = saved["student_id"]
         app.course.value = saved["course"]
         app.last_name.value = saved["last_name"]
@@ -375,7 +387,7 @@ def show_results(app, data):
             ft.Container(height=12),
             ft.Button(
                 content="Back to Enrollment",
-                width=400,
+                width=button_width,
                 bgcolor=BURGUNDY,
                 color="#FFFFFF",
                 style=ft.ButtonStyle(
@@ -391,9 +403,9 @@ def show_results(app, data):
 
     result_card = ft.Container(
         content=result_content,
-        width=460,
+        width=card_width,
         height=600,
-        padding=24,
+        padding=card_padding,
         bgcolor=CARD_BACKGROUND,
         border_radius=16,
         shadow=ft.BoxShadow(
